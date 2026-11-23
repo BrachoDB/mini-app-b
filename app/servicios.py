@@ -33,6 +33,22 @@ QUESTIONS = [
         "explanation": "La célula es la unidad estructural y funcional básica de la vida.",
     },
     {
+        "id": "ciencia-4",
+        "category": "ciencia",
+        "question": "¿Qué fuerza mantiene a los planetas en órbita alrededor del Sol?",
+        "options": ["La gravedad", "La fricción", "El magnetismo", "La presión"],
+        "correct_option": 0,
+        "explanation": "La gravedad del Sol mantiene a los planetas en sus órbitas.",
+    },
+    {
+        "id": "ciencia-5",
+        "category": "ciencia",
+        "question": "¿Cuál es el símbolo químico del oro?",
+        "options": ["Ag", "Au", "Fe", "O"],
+        "correct_option": 1,
+        "explanation": "El símbolo químico del oro es Au.",
+    },
+    {
         "id": "historia-1",
         "category": "historia",
         "question": "¿En qué año llegó Cristóbal Colón a América?",
@@ -57,6 +73,22 @@ QUESTIONS = [
         "explanation": "El Renacimiento tuvo sus primeros centros en Italia.",
     },
     {
+        "id": "historia-4",
+        "category": "historia",
+        "question": "¿Qué muro dividió Berlín durante la Guerra Fría?",
+        "options": ["El Muro de Adriano", "El Muro de Berlín", "La Gran Muralla", "El Muro Atlántico"],
+        "correct_option": 1,
+        "explanation": "El Muro de Berlín dividió la ciudad entre 1961 y 1989.",
+    },
+    {
+        "id": "historia-5",
+        "category": "historia",
+        "question": "¿Quién fue el primer presidente de Estados Unidos?",
+        "options": ["Abraham Lincoln", "Thomas Jefferson", "George Washington", "John Adams"],
+        "correct_option": 2,
+        "explanation": "George Washington fue el primer presidente de Estados Unidos.",
+    },
+    {
         "id": "geografia-1",
         "category": "geografia",
         "question": "¿Cuál es el océano más grande del planeta?",
@@ -79,6 +111,22 @@ QUESTIONS = [
         "options": ["Asia", "América", "África", "Oceanía"],
         "correct_option": 2,
         "explanation": "El Sahara se extiende por el norte de África.",
+    },
+    {
+        "id": "geografia-4",
+        "category": "geografia",
+        "question": "¿Cuál es el río más largo de América del Sur?",
+        "options": ["Amazonas", "Paraná", "Orinoco", "Magdalena"],
+        "correct_option": 0,
+        "explanation": "El Amazonas es el río más largo de América del Sur.",
+    },
+    {
+        "id": "geografia-5",
+        "category": "geografia",
+        "question": "¿Qué país tiene actualmente la mayor población?",
+        "options": ["China", "India", "Indonesia", "Pakistán"],
+        "correct_option": 1,
+        "explanation": "India es actualmente el país con mayor población.",
     },
     {
         "id": "tecnologia-1",
@@ -108,6 +156,27 @@ QUESTIONS = [
         "options": ["Escáner", "Router", "Proyector", "Teclado"],
         "correct_option": 1,
         "explanation": "El router dirige el tráfico entre redes, incluida la conexión a Internet.",
+    },
+    {
+        "id": "tecnologia-4",
+        "category": "tecnologia",
+        "question": "¿Qué lenguaje se usa principalmente para dar estilo a páginas web?",
+        "options": ["HTML", "SQL", "CSS", "Python"],
+        "correct_option": 2,
+        "explanation": "CSS se utiliza para definir la presentación visual de páginas web.",
+    },
+    {
+        "id": "tecnologia-5",
+        "category": "tecnologia",
+        "question": "¿Qué significa la sigla URL?",
+        "options": [
+            "Uniform Resource Locator",
+            "Universal Reference Link",
+            "Unified Routing Language",
+            "User Resource List",
+        ],
+        "correct_option": 0,
+        "explanation": "URL significa Uniform Resource Locator.",
     },
 ]
 
@@ -140,6 +209,17 @@ def get_categories() -> list[dict[str, str]]:
     return [category.copy() for category in CATEGORIES]
 
 
+def get_questions(cantidad: int) -> list[dict]:
+    return [
+        {
+            "id": question["id"],
+            "texto": question["question"],
+            "opciones": question["options"].copy(),
+        }
+        for question in QUESTIONS[:cantidad]
+    ]
+
+
 def _public_question(question: dict) -> dict:
     return {
         "id": question["id"],
@@ -148,7 +228,7 @@ def _public_question(question: dict) -> dict:
     }
 
 
-def create_quiz(category_id: str) -> dict:
+def create_quiz(category_id: str, cantidad: int = 3) -> dict:
     if category_id not in _CATEGORY_BY_ID:
         raise InvalidCategoryError(category_id)
 
@@ -156,7 +236,7 @@ def create_quiz(category_id: str) -> dict:
         question["id"]
         for question in QUESTIONS
         if question["category"] == category_id
-    ]
+    ][:cantidad]
     quiz_id = str(uuid4())
     _QUIZZES[quiz_id] = {
         "category": category_id,

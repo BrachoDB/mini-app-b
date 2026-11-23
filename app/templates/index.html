@@ -134,6 +134,16 @@
       .category-button:hover, .option-button:hover { border-color: var(--green); transform: translateY(-1px); }
       .category-button[aria-pressed="true"] { border-color: var(--green); color: var(--green-dark); background: #eff6e7; }
 
+      .quantity-select {
+        min-height: 3rem;
+        padding: .6rem .8rem;
+        border: 1px solid var(--line);
+        border-radius: .8rem;
+        color: var(--ink);
+        background: #fff;
+        font: inherit;
+      }
+
       .primary-button {
         display: inline-flex;
         min-height: 3.35rem;
@@ -208,6 +218,14 @@
           <div class="setup-area" id="setup-area">
             <span class="section-label">Escoge una categoría</span>
             <div class="categories" id="categories" role="group" aria-label="Categorías"></div>
+            <label class="section-label" for="question-quantity">Cantidad de preguntas</label>
+            <select class="quantity-select" id="question-quantity">
+              <option value="1">1 pregunta</option>
+              <option value="2">2 preguntas</option>
+              <option value="3" selected>3 preguntas</option>
+              <option value="4">4 preguntas</option>
+              <option value="5">5 preguntas</option>
+            </select>
             <button class="primary-button" id="start-button" type="button">Comenzar trivia <span aria-hidden="true">→</span></button>
             <p class="error" id="setup-error" role="alert"></p>
           </div>
@@ -241,6 +259,7 @@
       const questionArea = document.querySelector("#question-area");
       const resultArea = document.querySelector("#result-area");
       const startButton = document.querySelector("#start-button");
+      const questionQuantity = document.querySelector("#question-quantity");
       const nextButton = document.querySelector("#next-button");
       const setupError = document.querySelector("#setup-error");
       const optionLetters = ["A", "B", "C", "D"];
@@ -380,7 +399,10 @@
         try {
           quiz = await request("/api/quizzes", {
             method: "POST",
-            body: JSON.stringify({ category: selectedCategory }),
+            body: JSON.stringify({
+              category: selectedCategory,
+              cantidad: Number(questionQuantity.value),
+            }),
           });
           setupArea.hidden = true;
           displayQuestion(quiz.question, 0);

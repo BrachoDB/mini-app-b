@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field
@@ -14,6 +14,7 @@ from .servicios import (
     QuizNotFoundError,
     create_quiz,
     get_categories,
+    get_questions,
     submit_answer,
 )
 
@@ -23,6 +24,7 @@ templates = Jinja2Templates(directory=Path(__file__).parent / "templates")
 
 class QuizRequest(BaseModel):
     category: str
+    cantidad: int = Field(default=3, ge=1, le=5)
 
 
 class AnswerRequest(BaseModel):
@@ -44,10 +46,15 @@ def categories() -> list[dict[str, str]]:
     return get_categories()
 
 
+@app.get("/api/preguntas")
+def questions(cantidad: int = Query(default=5, ge=1, le=5)) -> list[dict]:
+    return get_questions(cantidad)
+
+
 @app.post("/api/quizzes")
 def start_quiz(payload: QuizRequest) -> dict:
     try:
-        return create_quiz(payload.category)
+        return create_quiz(payload.category, payload.cantidad)
     except InvalidCategoryError as error:
         raise HTTPException(
             status_code=422, detail="La categoría seleccionada no existe."
